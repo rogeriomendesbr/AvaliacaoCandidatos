@@ -32,14 +32,10 @@ def estimate_tokens(text: str) -> int:
 
 def build_prompt(prompt_template: str, requirements: str, resumes: dict) -> str:
     text_resumes = "\n\n- ".join(resumes.values())
-<<<<<<< HEAD
     prompt = f"{prompt_template}\n\n**REQUISITOS DA VAGA:**\n\n{requirements}\n\n**CURRÍCULOS DOS CANDIDATOS:**\n\n- {text_resumes}"
     if estimate_tokens(prompt) > _MAX_PROMPT_TOKENS:
         raise TokenLimitError()
     return prompt
-=======
-    return f"{prompt_template}\n\n**REQUISITOS DA VAGA:**\n\n{requirements}\n\n**CURRÍCULOS DOS CANDIDATOS:**\n\n- {text_resumes}"
->>>>>>> 50e682b16ee4c81eb52b1fcf5ada1b47412b0702
 
 
 def analyze_resumes(api_key: str, model: str, prompt: str) -> str:
