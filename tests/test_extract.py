@@ -191,6 +191,11 @@ def test_extract_docx_not_mistaken_for_legacy_doc():
     assert "Nao deve virar erro" in out
 
 
+def test_extract_unknown_extension_raises_unsupported_format():
+    with pytest.raises(UnsupportedFormatError, match=r"\.pdf, \.md ou \.docx"):
+        extract_resume("cv.png", b"qualquer coisa")
+
+
 # --- extract_resume: image sources (OCR) ------------------------------------
 
 

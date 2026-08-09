@@ -52,9 +52,12 @@ with col1:
 
 with col2:
     st.markdown(f'<label class="top-label">Escolha os currículos no formato .md, .pdf ou .docx:</label>', unsafe_allow_html=True)
+    # Sem `type=[...]`: essa restrição é aplicada pelo Streamlit antes do
+    # nosso código rodar e uma extensão inválida derruba o app com uma
+    # exceção que não pode ser capturada. A validação real acontece em
+    # extract_resume(), cujos erros já tratamos de forma amigável abaixo.
     uploaded_file = st.file_uploader(
         "",
-        type=["pdf", "md", "docx"],
         key=f"uploader_{st.session_state.uploader_key}",
         label_visibility="collapsed",
     )

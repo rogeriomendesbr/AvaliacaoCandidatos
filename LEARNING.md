@@ -12,6 +12,8 @@ Commit `276e830` ("Merge conflits") was pushed to `main` with unresolved `<<<<<<
 
 As of streamlit 1.58.0, uploading a file whose extension isn't in `type=[...]` raises `StreamlitAPIException` during deserialization, before any app code runs. This means `services/extract.py`'s `UnsupportedFormatError` branch for `.doc` files is unreachable through the real widget — it can only be exercised by calling `extract_resume()` directly, or by monkeypatching `extract_resume` in an `AppTest`. Don't try to trigger it via `at.file_uploader[0].set_value(("x.doc", ...))`; it will blow up before app code sees it.
 
+**Superseded** — see "The `type=[...]` restriction was actively harmful, not just untestable" below. `app.py` no longer sets `type=[...]` at all, so this entry's workaround (monkeypatch `extract_resume` instead of uploading a real `.doc`) is no longer needed for that case specifically — real `.doc` uploads now reach app code normally. The general lesson (Streamlit can validate widget state before script code runs) still stands and can bite other widgets.
+
 ## `AppTest`'s default timeout is too short for widget interactions like `st.pills`
 
 The default `AppTest` timeout (3s) intermittently timed out on `st.pills` interactions in this environment. Fixed by passing `default_timeout=15` to `AppTest.from_file(...)` in `tests/test_app.py`'s `_app_test()` helper. If new widget-interaction tests start timing out, raise this further rather than assuming the app itself is hanging.
@@ -35,3 +37,9 @@ In `services/extract.py::_ocr_pdf`, page rasterization (`page.get_pixmap`) is do
 ## No lint/format/security tooling is configured
 
 Repeatedly re-verified (no `ruff`/`flake8`/`black`/`bandit` config, no `pyproject.toml`, no pre-commit hooks). `pytest` is the only real quality gate. Don't reference a lint/format/security step as if it exists — check `HARNESS.md` before claiming otherwise, and update both files together if that ever changes.
+
+## The `type=[...]` restriction was actively harmful, not just untestable
+
+Uploading a `.doc` file crashed the whole app with an uncatchable exception — not just an unfriendly message. Root cause: `st.file_uploader(..., type=["pdf", "md", "docx"])`'s extension check (`enforce_filename_restriction`) runs during `session_state`'s widget-deserialization step, which Streamlit performs as part of `on_script_will_rerun` — *before* `app.py`'s script body executes at all. A `try/except` wrapped around the `st.file_uploader(...)` call itself cannot catch it, because the raise happens outside that call's stack frame entirely (confirmed by tracing the exception through `script_runner.py` — it originates in `code_to_exec` before `exec(code, module.__dict__)` runs). The user was stuck because every rerun re-hit the same crash for the same attached file.
+
+**Fix**: don't rely on `file_uploader`'s `type=[...]` for validation at all. `app.py` no longer passes `type=`; `services/extract.py::extract_resume` now validates the extension itself (raising `UnsupportedFormatError` for `.doc` and any other unrecognized extension, not just falling through to a blind `.decode("utf-8")`), and that exception is already caught and shown via `st.error` in `app.py`'s normal upload try/except. Same lesson as the entry above, sharper: if a Streamlit widget constraint (`type=`, `max_chars=`, validators, etc.) can be violated by data arriving outside the browser's own UI gating (drag-and-drop, `AppTest.set_value`, a stale client), don't trust framework-level rejection to be catchable — validate in application code where you control the exception flow.

@@ -75,6 +75,20 @@ def test_upload_ocr_error_shows_message_and_discards_file(monkeypatch):
     assert at.session_state["uploaded_files"] == {}
 
 
+def test_upload_doc_file_shows_friendly_error_without_crashing():
+    """Regressão: um upload .doc já derrubou o app com uma exceção não
+    capturável (Streamlit valida `type=[...]` antes do nosso código rodar).
+    A extensão não é mais restringida no widget; extract_resume() agora
+    rejeita com um erro amigável e o app segue funcionando normalmente."""
+    at = _app_test().run()
+    at.file_uploader[0].set_value(("cv.doc", b"\xd0\xcf\x11\xe0binario", "application/msword"))
+    at.run()
+
+    assert not at.exception
+    assert any(".docx" in e.value for e in at.error)
+    assert at.session_state["uploaded_files"] == {}
+
+
 def test_upload_unexpected_error_shows_generic_message(monkeypatch):
     def raise_unexpected(name, data):
         raise RuntimeError("boom")
