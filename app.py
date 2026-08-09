@@ -48,7 +48,7 @@ col1, col2, col3 = st.columns(3)
 
 with col1:
     st.markdown(f'<label class="top-label">Insira os requisitos da vaga:</label>', unsafe_allow_html=True)
-    text_requisites = st.text_area("", height=200, label_visibility="collapsed")
+    text_requisites = st.text_area("Requisitos da vaga", height=200, label_visibility="collapsed")
 
 with col2:
     st.markdown(f'<label class="top-label">Escolha os currículos no formato .txt, .md, .docx ou .pdf:</label>', unsafe_allow_html=True)
@@ -57,7 +57,7 @@ with col2:
     # exceção que não pode ser capturada. A validação real acontece em
     # extract_resume(), cujos erros já tratamos de forma amigável abaixo.
     uploaded_file = st.file_uploader(
-        "",
+        "Currículos dos candidatos",
         key=f"uploader_{st.session_state.uploader_key}",
         label_visibility="collapsed",
     )
