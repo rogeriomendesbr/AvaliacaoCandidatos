@@ -1,4 +1,6 @@
 import streamlit as st
+import pymupdf
+import pymupdf4llm
 from pathlib import Path
 from services.llm import analyze_resumes, build_prompt, RateLimitError, AuthenticationError, APIError, TokenLimitError
 from services.config import get_hf_api_key, get_hf_model
