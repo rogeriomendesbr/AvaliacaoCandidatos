@@ -2,6 +2,12 @@
 .git/
 .gitignore
 
+# Arquivos de desenvolvimento (não necessários em runtime)
+.claude/
+tests/
+pytest.ini
+requirements-dev.txt
+
 # Segredos — nunca incluir na imagem
 .streamlit/secrets.toml
 

@@ -2,3 +2,7 @@ streamlit==1.58.0
 huggingface_hub==1.19.0
 pymupdf==1.27.2.3
 pymupdf4llm==1.27.2.3
+pytesseract==0.3.13
+pillow==12.2.0
+mammoth==1.12.0
+markdownify==1.2.3

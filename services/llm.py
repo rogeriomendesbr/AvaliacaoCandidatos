@@ -20,9 +20,22 @@ class APIError(Exception):
         super().__init__(message)
 
 
+# Estimativa grosseira de tokens (~4 caracteres por token) usada apenas para
+# rejeitar prompts claramente grandes demais antes de chamar a API.
+_CHARS_PER_TOKEN = 4
+_MAX_PROMPT_TOKENS = 100_000
+
+
+def estimate_tokens(text: str) -> int:
+    return len(text) // _CHARS_PER_TOKEN
+
+
 def build_prompt(prompt_template: str, requirements: str, resumes: dict) -> str:
     text_resumes = "\n\n- ".join(resumes.values())
-    return f"{prompt_template}\n\n**REQUISITOS DA VAGA:**\n\n{requirements}\n\n**CURRÍCULOS DOS CANDIDATOS:**\n\n- {text_resumes}"
+    prompt = f"{prompt_template}\n\n**REQUISITOS DA VAGA:**\n\n{requirements}\n\n**CURRÍCULOS DOS CANDIDATOS:**\n\n- {text_resumes}"
+    if estimate_tokens(prompt) > _MAX_PROMPT_TOKENS:
+        raise TokenLimitError()
+    return prompt
 
 
 def analyze_resumes(api_key: str, model: str, prompt: str) -> str:
@@ -49,4 +62,4 @@ def analyze_resumes(api_key: str, model: str, prompt: str) -> str:
         raise APIError(str(e)) from e
 
 
-__all__ = ["analyze_resumes", "build_prompt", "RateLimitError", "AuthenticationError", "APIError", "TokenLimitError"]
+__all__ = ["analyze_resumes", "build_prompt", "estimate_tokens", "RateLimitError", "AuthenticationError", "APIError", "TokenLimitError"]

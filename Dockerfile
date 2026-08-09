@@ -2,6 +2,11 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
+# Tesseract OCR (com idioma português) para leitura de currículos baseados em imagem
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends tesseract-ocr tesseract-ocr-por && \
+    rm -rf /var/lib/apt/lists/*
+
 # HF Spaces exige usuário não-root com uid 1000
 RUN useradd -m -u 1000 user
 USER user
