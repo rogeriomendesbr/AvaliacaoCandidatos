@@ -51,7 +51,7 @@ with col1:
     text_requisites = st.text_area("", height=200, label_visibility="collapsed")
 
 with col2:
-    st.markdown(f'<label class="top-label">Escolha os currículos no formato .md, .pdf ou .docx:</label>', unsafe_allow_html=True)
+    st.markdown(f'<label class="top-label">Escolha os currículos no formato .txt, .md, .docx ou .pdf:</label>', unsafe_allow_html=True)
     # Sem `type=[...]`: essa restrição é aplicada pelo Streamlit antes do
     # nosso código rodar e uma extensão inválida derruba o app com uma
     # exceção que não pode ser capturada. A validação real acontece em

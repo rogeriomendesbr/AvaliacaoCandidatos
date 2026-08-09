@@ -35,12 +35,12 @@ def extract_resume(file_name: str, file_bytes: bytes) -> str:
     if name.endswith(".doc"):
         raise UnsupportedFormatError(
             "O formato .doc (Word 97-2003) não é suportado. "
-            "Envie o currículo em .pdf, .md ou .docx — no Word, use Salvar Como → .docx."
+            "Envie o currículo em .pdf, .md, .txt ou .docx — no Word, use Salvar Como → .docx."
         )
-    if name.endswith(".md"):
+    if name.endswith(".md") or name.endswith(".txt"):
         return file_bytes.decode("utf-8")
     raise UnsupportedFormatError(
-        "Formato de arquivo não suportado. Envie o currículo em .pdf, .md ou .docx."
+        "Formato de arquivo não suportado. Envie o currículo em .pdf, .md, .txt ou .docx."
     )
 
 

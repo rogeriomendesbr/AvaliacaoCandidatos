@@ -15,10 +15,10 @@ Ferramenta para análise e ranqueamento de candidatos com base nos requisitos de
 ## Como usar
 
 1. Insira os requisitos da vaga no campo de texto
-2. Carregue os currículos dos candidatos no formato `.md`, `.pdf` ou `.docx`
+2. Carregue os currículos dos candidatos no formato `.md`, `.txt`, `.pdf` ou `.docx`
 3. Clique em **Analisar candidatos**
 
-Os currículos podem ser `.md`, `.pdf` ou `.docx`. PDFs baseados em texto são convertidos diretamente para markdown; PDFs baseados em imagem (digitalizações) são lidos automaticamente via OCR e também convertidos para markdown. Arquivos `.docx` são convertidos para markdown preservando a estrutura (títulos, listas, ênfases) a partir dos estilos do Word. Todos são armazenados da mesma forma.
+Os currículos podem ser `.md`, `.txt`, `.pdf` ou `.docx`. Arquivos `.md` e `.txt` são lidos como texto puro. PDFs baseados em texto são convertidos diretamente para markdown; PDFs baseados em imagem (digitalizações) são lidos automaticamente via OCR e também convertidos para markdown. Arquivos `.docx` são convertidos para markdown preservando a estrutura (títulos, listas, ênfases) a partir dos estilos do Word. Todos são armazenados da mesma forma.
 
 O formato legado `.doc` (Word 97-2003) **não** é suportado: por ser um binário OLE, ele exigiria um conversor externo como o LibreOffice. Salve o arquivo como `.docx` antes de carregá-lo. O mesmo vale para o `.odt` nativo do LibreOffice.
 

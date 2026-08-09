@@ -129,6 +129,14 @@ def test_extract_markdown_file_decodes_utf8():
     assert extract_resume("cv.md", "Nome: João Ção".encode("utf-8")) == "Nome: João Ção"
 
 
+def test_extract_txt_file_decodes_utf8():
+    assert extract_resume("cv.txt", "Nome: João Ção".encode("utf-8")) == "Nome: João Ção"
+
+
+def test_extract_txt_uppercase_extension():
+    assert extract_resume("CV.TXT", "conteudo".encode("utf-8")) == "conteudo"
+
+
 def test_extract_text_pdf_returns_markdown():
     out = extract_resume("cv.pdf", _text_pdf_bytes())
     assert "Python" in out
@@ -192,7 +200,7 @@ def test_extract_docx_not_mistaken_for_legacy_doc():
 
 
 def test_extract_unknown_extension_raises_unsupported_format():
-    with pytest.raises(UnsupportedFormatError, match=r"\.pdf, \.md ou \.docx"):
+    with pytest.raises(UnsupportedFormatError, match=r"\.pdf, \.md, \.txt ou \.docx"):
         extract_resume("cv.png", b"qualquer coisa")
 
 
