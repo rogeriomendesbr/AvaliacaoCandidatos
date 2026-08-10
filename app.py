@@ -228,10 +228,7 @@ if st.session_state.analyzing:
                     except RateLimitError:
                         st.session_state.analysis_message = {
                             "type": "error",
-                            "text": (
-                                "⚠️ Limite de quota atingido ou muitas requisições por minuto!\n\n"
-                                "Isso acontece quando é atingido o limite de chamadas gratuitas da API da Groq."
-                            ),
+                            "text": "Limite de uso atingido no Groq.com. Tente novamente em alguns minutos",
                         }
                     except AuthenticationError:
                         st.session_state.analysis_message = {

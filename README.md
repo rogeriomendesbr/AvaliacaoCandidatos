@@ -31,7 +31,7 @@ docker build -t avaliacao-candidatos .
 docker run -p 7860:7860 -e GROQ_API_KEY=gsk_... avaliacao-candidatos
 ```
 
-Para usar um modelo diferente do padrão (`openai/gpt-oss-20b`):
+Para usar um modelo diferente do padrão (`openai/gpt-oss-120b`):
 
 ```bash
 docker run -p 7860:7860 -e GROQ_API_KEY=gsk_... -e GROQ_MODEL=llama-3.3-70b-versatile avaliacao-candidatos
@@ -73,7 +73,7 @@ Em **Settings → Repository secrets**, adicione:
 | Variável de ambiente | Valor |
 |---|---|
 | `GROQ_API_KEY` | Sua API key da Groq |
-| `GROQ_MODEL` | Opcional. Ex: `openai/gpt-oss-20b` |
+| `GROQ_MODEL` | Opcional. Ex: `openai/gpt-oss-120b` |
 
 A API key pode ser criada em **console.groq.com → API Keys**.
 

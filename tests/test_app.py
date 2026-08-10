@@ -169,7 +169,7 @@ def test_analyze_success_shows_result_and_prompt_expander(monkeypatch):
 @pytest.mark.parametrize(
     "error,expected_snippet",
     [
-        (llm.RateLimitError(), "Limite de quota"),
+        (llm.RateLimitError(), "Limite de uso atingido no Groq.com"),
         (llm.AuthenticationError(), "autenticação"),
         (llm.APIError("mensagem específica da API"), "mensagem específica da API"),
         (llm.TokenLimitError(), "limite de tokens"),

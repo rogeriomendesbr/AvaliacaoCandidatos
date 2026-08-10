@@ -18,7 +18,7 @@ def get_groq_api_key() -> str:
 
 
 def get_groq_model() -> str:
-    return get_secret("GROQ_MODEL", "groq", "model", default="openai/gpt-oss-20b")
+    return get_secret("GROQ_MODEL", "groq", "model", default="openai/gpt-oss-120b")
 
 
 def get_tesseract_cmd() -> str:

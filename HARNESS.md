@@ -13,7 +13,7 @@ app.py                     Streamlit UI and top-level control flow (single entry
 services/
   config.py                Reads secrets/env vars (GROQ_API_KEY, GROQ_MODEL, TESSERACT_CMD, OCR_LANG)
   extract.py                .pdf / .docx / .md / .txt resume parsing, incl. OCR fallback for scanned PDFs
-  llm.py                    Groq client call (openai/gpt-oss-20b default), prompt assembly, error mapping
+  llm.py                    Groq client call (openai/gpt-oss-120b default), prompt assembly, error mapping
 prompts/analysis.md         The LLM prompt template used at runtime (not an agent instruction file)
 tests/                      pytest suite — test_app.py, test_llm.py, test_config.py, test_extract.py
 assets/                     Static CSS/logo used by the Streamlit UI

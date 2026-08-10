@@ -51,7 +51,7 @@ def test_get_secret_returns_default_when_env_empty(monkeypatch):
 def test_get_secret_empty_secrets_value_falls_back_to_default_model(monkeypatch):
     monkeypatch.delenv("GROQ_MODEL", raising=False)
     monkeypatch.setattr(config.st, "secrets", {"groq": {"model": ""}})
-    assert config.get_groq_model() == "openai/gpt-oss-20b"
+    assert config.get_groq_model() == "openai/gpt-oss-120b"
 
 
 def test_get_secret_empty_default(monkeypatch):
@@ -68,7 +68,7 @@ def test_get_groq_api_key_from_env(monkeypatch):
 def test_get_groq_model_default(monkeypatch):
     monkeypatch.delenv("GROQ_MODEL", raising=False)
     monkeypatch.setattr(config.st, "secrets", {})
-    assert config.get_groq_model() == "openai/gpt-oss-20b"
+    assert config.get_groq_model() == "openai/gpt-oss-120b"
 
 
 def test_get_groq_model_from_env(monkeypatch):
