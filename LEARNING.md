@@ -2,12 +2,6 @@
 
 Historical lessons for this repo — non-obvious constraints, rejected approaches, and why behind decisions. Referenced from [CLAUDE.md](CLAUDE.md) and [HARNESS.md](HARNESS.md). Append new entries at the bottom; don't rewrite history, just note when something in an old entry stopped being true.
 
-## Merge conflicts must be verified, not just resolved in the editor
-
-Commit `276e830` ("Merge conflits") was pushed to `main` with unresolved `<<<<<<< HEAD` / `=======` / `>>>>>>>` markers still inside `services/llm.py`, breaking `build_prompt` with a `SyntaxError`. The working tree looked fine because the fix existed uncommitted on disk — but HEAD (and origin/main) was broken.
-
-**Rule**: after resolving a merge, `git diff HEAD` the affected files and re-run the test suite *before* committing. A file with no visible markers in your editor can still have committed markers in a prior commit.
-
 ## Streamlit's `file_uploader(type=[...])` is enforced server-side
 
 As of streamlit 1.58.0, uploading a file whose extension isn't in `type=[...]` raises `StreamlitAPIException` during deserialization, before any app code runs. This means `services/extract.py`'s `UnsupportedFormatError` branch for `.doc` files is unreachable through the real widget — it can only be exercised by calling `extract_resume()` directly, or by monkeypatching `extract_resume` in an `AppTest`. Don't try to trigger it via `at.file_uploader[0].set_value(("x.doc", ...))`; it will blow up before app code sees it.
@@ -51,3 +45,25 @@ Uploading a `.doc` file crashed the whole app with an uncatchable exception — 
 The module-level version was also a functional regression, not just a no-op: it broke `tests/test_extract.py`'s OCR mocks (`monkeypatch.setitem(sys.modules, "pytesseract", fake)` only affects imports that happen *after* the monkeypatch runs; a module-level import already bound `services.extract.pytesseract` once, at first import, before any test's monkeypatch could apply) and collapsed the precise `TesseractNotFoundError`/`TesseractError` handling into a catch-all `except Exception`. Reverted back to the lazy, function-scoped import.
 
 **Rule**: an IDE/linter warning about an import is almost always about the local environment (wrong/incomplete interpreter), not the code's import style. Don't restructure working import patterns to chase it — fix the environment instead, and re-run the test suite before assuming a "harmless" import refactor is actually harmless.
+
+## `st.error()` immediately followed by `st.rerun()` in the same run is invisible to the user
+
+When adding the disable/hourglass upload state machine, the upload error branch called `st.error(...)` and then, in a `finally` block right after, unconditionally called `st.rerun()` (needed to reset `pending_upload`/`uploader_key` back to idle). Streamlit replaces the entire page's element tree on every run; a run that calls `st.rerun()` right after `st.error(...)` never gives the browser a chance to actually display that error before the next run wipes it — the message is emitted but the page is already gone before the user can see it. Result: `.doc` uploads (and any other upload error) silently failed with the widget just resetting, no visible feedback at all.
+
+This bug was **not caught by the existing `AppTest`-based tests** (`test_upload_doc_file_shows_friendly_error_without_crashing` et al.) even though they assert on `at.error` after the fact — worth treating `AppTest` assertions on transient per-run state with suspicion when a code path deliberately chains multiple internal `st.rerun()` calls; verify what the *actually settled* run contains (e.g. check that a reset/idle indicator like `uploader_key` or `disabled=False` is present in the same tree as the message) rather than trusting that "the assertion passed" proves the message would be visible in a real browser.
+
+**Fix**: never call `st.error()`/`st.success()` etc. immediately before an unconditional `st.rerun()` in the same code path. If a message must survive a mandatory reset-rerun, stash it in `st.session_state` (e.g. `st.session_state.upload_error`) and render+clear it on the *next* run instead — see the `upload_error` pattern in `app.py`'s upload handler.
+
+## The disable/hourglass/deferred-message pattern is now used twice — treat it as the standard for any "click → slow work → result" control
+
+Both the file uploader and the "Analisar candidatos" button follow the same three-phase shape now: (1) on trigger, stash whatever's needed into `st.session_state` and `st.rerun()` immediately, *before* doing any slow work — this is the only way to get the widget to render `disabled=True` on the next pass, since Streamlit can't retroactively disable a widget already rendered in the run that triggered it; (2) on the next run, render the widget disabled, inject a page-wide `cursor: wait` style, do the slow work, and store the outcome (never call `st.error`/`st.success` directly here — see the entry above) in session_state, then `st.rerun()` again; (3) the following (settled) run renders the widget enabled and displays+clears the stored outcome.
+
+Verified both instances directly (not just via passing `AppTest` assertions) by inspecting the settled run's `session_state` and widget `.disabled` property together with the message — see how `app.py`'s upload and analyze-button handlers do it if adding a third instance of this pattern (e.g. another slow action button). Don't shortcut to a single-phase `try/except` + immediate message for anything that both (a) takes long enough that a double-click matters and (b) needs to show a `disabled=`/cursor cue — it silently doesn't work.
+
+## A conditionally-rendered `st.markdown`/`st.error`/any element shifts everything below it — even if it's visually empty
+
+Adding the busy-cursor CSS as `if busy: st.markdown("<style>...</style>", unsafe_allow_html=True)` caused the *entire page* to shift up/down whenever `busy` toggled — logo, title, all three columns, the button, everything below it. Cause: every `st.*` call gets wrapped in its own element-container with vertical margin in Streamlit's layout flow, regardless of whether the element renders any visible content. A `<style>` tag has zero visible size but its *container* still occupies space, so inserting/removing it conditionally inserts/removes that space, and everything after it in the page shifts to compensate. This is easy to miss because the element itself is invisible — the bug reads as "unrelated things move around" rather than "this specific element appeared."
+
+Same root cause as the `col2` height issue fixed just before this (dynamic content changing an element's footprint) but worse in scope: that one only affected one column's height, this one affected the *entire page* because the conditional element was the first thing rendered, before the logo/title row.
+
+**Fix**: never gate an element's *presence* on state — gate its *content*. The cursor-override CSS is now folded into the single, always-rendered `st.markdown(f"<style>{load_css()}\n{cursor_rule}</style>", ...)` call at the top of `app.py`, where `cursor_rule` is `""` when not busy. One element, always present, only its inner text changes. General rule: if a UI element needs to conditionally show/hide, prefer varying its content/value over wrapping the whole `st.*` call in `if condition:` — the latter is a layout-shift risk anywhere on the page, not just near dynamic content.

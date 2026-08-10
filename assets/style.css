@@ -28,6 +28,37 @@ section[data-testid="stMain"] {
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
+.st-key-clear-button > div > button {
+    background-color: #6c757d;
+    color: white;
+    border-radius: 8px;
+    border: none;
+    min-width: 140px;
+    padding: 12px 0;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+.st-key-clear-button > div > button:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* Linha dos botões Analisar/Limpar: por padrão, st.columns divide o espaço
+   proporcionalmente e usa um dos gaps predefinidos (16px/32px/...), o que
+   deixa os botões longe um do outro em telas largas. Aqui a linha e cada
+   coluna encolhem para o tamanho do botão, com um gap fixo de 24px. */
+div[data-testid="stHorizontalBlock"]:has(.st-key-go-button) {
+    width: fit-content !important;
+    gap: 24px !important;
+}
+div[data-testid="stHorizontalBlock"]:has(.st-key-go-button) > div[data-testid="stColumn"] {
+    width: fit-content !important;
+    flex: 0 0 auto !important;
+    min-width: 0 !important;
+}
+
 .top-label {
     font-size:14px;
     font-weight:600;

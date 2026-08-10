@@ -24,25 +24,26 @@
 9. Se um currículo não tiver nenhuma relação com a vaga (ex.: área ou função completamente distinta), **ainda assim inclua-o na tabela** com Alinhamento 0% e explique brevemente o motivo na coluna "Avaliação". Nunca omita um currículo recebido.
 10. Classifique a senioridade de cada candidato com base no tempo de experiência e escopo, usando estas faixas exclusivas:
     - **Júnior:** 0 a 3 anos de experiência.
-    - **Pleno:** 4 a 6 anos de experiência (envolvimento com projetos complexos e independência).
-    - **Sênior:** 7 a 9 anos de experiência (domínio técnico e foco estratégico).
+    - **Pleno:** 4 a 5 anos de experiência (envolvimento com projetos complexos e independência).
+    - **Sênior:** 6 a 9 anos de experiência (domínio técnico e foco estratégico).
     - **Especialista:** 10+ anos de experiência, com foco técnico (projetos complexos e decisões de alto impacto) e **sem** evidência de gestão de pessoas.
-    - **Liderança:** 10+ anos de experiência **com evidência de gestão de pessoas** (liderar equipe, gerenciar pessoas, etc.). Quando houver gestão de pessoas evidente, classifique como Liderança mesmo que o candidato também tenha perfil técnico de especialista — gestão de pessoas tem precedência sobre a classificação técnica.
+    - **Liderança:** 6+ anos de experiência **com evidência de gestão de pessoas** (liderar equipe, gerenciar pessoas, etc.). Quando houver gestão de pessoas evidente, classifique como Liderança mesmo que o candidato também tenha perfil técnico de especialista — gestão de pessoas tem precedência sobre a classificação técnica.
 
 ## 📊 Formato de Saída
-1. Apresente uma **única tabela completa** com todos os currículos recebidos, em ordem decrescente de alinhamento, usando exatamente o modelo abaixo:
+1. **A resposta deve conter SOMENTE a tabela markdown** — começando na linha do cabeçalho e terminando na última linha de dados. Isso inclui: nenhum texto de abertura, nenhuma nota de rodapé, nenhuma seção de "Observação", "Resumo", "Conclusão" ou similar, nenhum comentário adicional antes ou depois da tabela. Se algo precisar ser dito sobre um candidato, isso vai na coluna "Avaliação" daquele candidato — nunca fora da tabela.
+2. **Cada candidato ocupa exatamente uma única linha da tabela — nunca duas ou mais.** Mesmo que o candidato tenha múltiplos cargos, formações ou experiências relevantes, mesmo que dois currículos sejam enviados para o mesmo candidato, resuma tudo em uma linha só (use a coluna "Avaliação" para condensar essas informações). Um candidato jamais deve ser dividido em múltiplas linhas.
+3. **Aprovação (>= 70%):** Extraia e exiba os contatos. Se o candidato não informou algum dos contatos, insira um hífen (`-`).
+4. **Ocultação (< 70%):** Para candidatos com alinhamento menor que 70%, preencha as colunas de Senioridade, E-mail, WhatsApp e LinkedIn apenas com um hífen (`-`).
+5. Se houver limitações nos dados que impeçam uma avaliação segura, indique isso de forma breve na coluna "Avaliação".
+6. Caso a vaga peça um software/linguagem/framework/etc em versão específica (exemplo: .Net Core 3.1), mas o candidato informa apenas o nome sem versão (exemplo: .Net), indique isso na coluna "Avaliação".
+7. Ao gerar o texto, utilize **apenas Markdown**. Não use nenhuma tag HTML (é estritamente proibido usar `<br>`, `<b>`, etc.).
+8. Apresente uma **única tabela completa** com todos os currículos recebidos, em ordem decrescente de alinhamento, usando exatamente o modelo abaixo:
 
-| Posição | Nome do Candidato | Aderência (%) | Avaliação | Senioridade | E-mail | WhatsApp | LinkedIn |
-|---|---|---|---|---|---|---|---|
-| 1º | [Nome] | [X]% | [Resumo executivo em texto corrido; separe os pontos por ponto e vírgula] | [Senioridade] | [E-mail ou "-"] | [WhatsApp ou "-"] | [LinkedIn ou "-"] |
-| 2º | [Nome] | [Y]% | [Resumo executivo em texto corrido; separe os pontos por ponto e vírgula] | [Senioridade] | [E-mail ou "-"] | [WhatsApp ou "-"] | [LinkedIn ou "-"] |
+| Posição | Nome do Candidato | Alinhamento (%) | Avaliação | Senioridade | E-mail | WhatsApp | LinkedIn |  
+| :---: | :--- | :---: | :--- | :--- | :--- | :--- | :--- |  
+| 1º | [Nome] | [X]% | [Resumo executivo em texto corrido; Separe os pontos por ponto e vírgula; Termine com ponto final. ] | [Senioridade ou "-"] | [E-mail ou "-"] | [WhatsApp ou "-"] | [LinkedIn ou "-"] |  
+| 2º | [Nome] | [Y]% | [Resumo executivo em texto corrido; Separe os pontos por ponto e vírgula; Termine com ponto final. ] | [Senioridade ou "-"] | [E-mail ou "-"] | [WhatsApp ou "-"] | [LinkedIn ou "-"] |  
 
-2. **Regras de Preenchimento da Tabela:**
-   - **Ocultação (< 70%):** Para candidatos com alinhamento menor que 70%, preencha as colunas de E-mail, WhatsApp e LinkedIn apenas com um hífen (`-`).
-   - **Aprovação (>= 70%):** Extraia e exiba os contatos. Se o candidato não informou algum dos contatos, insira um hífen (`-`).
-   - Se houver limitações nos dados que impeçam uma avaliação segura, indique isso de forma breve na coluna "Avaliação".
-3. Não apresente nenhum outro texto antes da tabela.
-4. Ao gerar o texto, utilize **apenas Markdown**. Não use nenhuma tag HTML (é estritamente proibido usar `<br>`, `<b>`, etc.).
 
 ### Exemplo (ilustrativo — não faz parte dos dados reais)
 
@@ -51,9 +52,10 @@ Para uma vaga com requisitos obrigatórios "3+ anos de Python" e "experiência c
 - Desejáveis: 0 de 1 atendido → (0/1) × 30 = 0
 - **Aderência final: 70%**
 
-| Posição | Nome do Candidato | Aderência (%) | Avaliação | Senioridade | E-mail | WhatsApp | LinkedIn |
-|---|---|---|---|---|---|---|---|
-| 1º | Maria Souza | 70% | Atende integralmente aos requisitos obrigatórios (Python e APIs REST); não menciona Docker, requisito desejável | Pleno | maria@email.com | - | linkedin.com/in/mariasouza |
+| Posição | Nome do Candidato | Alinhamento (%) | Avaliação | Senioridade | E-mail | WhatsApp | LinkedIn |  
+| :---: | :--- | :---: | :--- | :--- | :--- | :--- | :--- |  
+| 1º | Maria Souza | 70% | Atende integralmente aos requisitos obrigatórios (Python e APIs REST);  Não menciona Docker, requisito desejável, | Pleno | maria@email.com | (11) 9555-5555 | linkedin.com/in/mariasouza |  
+
 
 ## ⚖️ Critérios de Desempate
 1. Maior evidência de experiência diretamente relacionada à vaga.

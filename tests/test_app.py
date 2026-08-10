@@ -187,3 +187,27 @@ def test_analyze_maps_errors_to_messages(monkeypatch, error, expected_snippet):
 
     assert not at.exception
     assert any(expected_snippet in e.value for e in at.error)
+
+
+# --- botão "Limpar dados" -------------------------------------------------
+
+
+def test_clear_button_resets_all_state(monkeypatch):
+    monkeypatch.setattr(llm, "analyze_resumes", lambda **kwargs: "RESULTADO DA ANALISE")
+    at = _ready_app(monkeypatch)
+    at.button(key="go-button").click().run()
+    assert any("sucesso" in s.value for s in at.success)  # sanity: análise rodou
+
+    uploader_key_before = at.session_state["uploader_key"]
+    requisites_key_before = at.session_state["requisites_key"]
+
+    at.button(key="clear-button").click().run()
+
+    assert not at.exception
+    assert at.session_state["uploaded_files"] == {}
+    assert at.session_state["analysis_message"] is None
+    assert not at.text_area[0].value
+    assert at.session_state["uploader_key"] > uploader_key_before
+    assert at.session_state["requisites_key"] > requisites_key_before
+    assert not at.success
+    assert not at.expander
