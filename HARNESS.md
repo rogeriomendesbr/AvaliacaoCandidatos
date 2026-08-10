@@ -1,6 +1,6 @@
 # Agent Harness Overview
 
-This repository is a **Python/Streamlit application** (Análise de Candidatos — an HR résumé-screening tool that calls the Groq API). It is developed with the help of **Claude Code** acting as an interactive coding assistant in this working directory.
+This repository is a **Python/Streamlit application** (Avaliação de Candidatos — an HR résumé-screening tool that calls the Groq API). It is developed with the help of **Claude Code** acting as an interactive coding assistant in this working directory.
 
 There is no autonomous multi-agent pipeline configured in this repo. There are no Dev/QE/Ops subagent roles, no local MCP servers, and no telemetry collection. If you are an AI agent picking up work here, treat this as a normal single-agent coding session: read code, make changes, run the real tests below, report honestly.
 

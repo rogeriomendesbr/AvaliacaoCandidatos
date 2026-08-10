@@ -7,7 +7,7 @@ from services.config import get_groq_api_key, get_groq_model
 from services.extract import extract_resume, OCRError, UnsupportedFormatError
 
 st.set_page_config(
-    page_title="Análise de Candidatos",
+    page_title="Avaliação de Candidatos",
     page_icon=":gear:",
     layout="wide",
 )
@@ -50,9 +50,9 @@ if "analyzing" not in st.session_state:
 if "analysis_message" not in st.session_state:
     st.session_state.analysis_message = None
 
-# Upload e análise se excluem mutuamente: enquanto um currículo está sendo
-# processado, o botão de análise fica desabilitado, e vice-versa — evita
-# que as duas operações concorram (ex.: iniciar uma análise enquanto um
+# Upload e avaliação se excluem mutuamente: enquanto um currículo está sendo
+# processado, o botão de avaliação fica desabilitado, e vice-versa — evita
+# que as duas operações concorram (ex.: iniciar uma avaliação enquanto um
 # currículo ainda não terminou de ser convertido para markdown).
 upload_processing = st.session_state.pending_upload is not None
 busy = upload_processing or st.session_state.analyzing
@@ -68,7 +68,7 @@ col_logo, col_title = st.columns([1, 20], vertical_alignment="center")
 with col_logo:
     st.image("assets/logo.png", width=64)
 with col_title:
-    st.subheader("Análise de Candidatos")
+    st.subheader("Avaliação de Candidatos")
 
 col1, col2, col3 = st.columns(3)
 
@@ -183,7 +183,7 @@ if clear_clicked and not busy:
 
 if clicked and not busy:
     # Mesmo padrão do upload: refaz o rerun antes de processar, para que o
-    # botão apareça desabilitado no próximo run enquanto a análise (que
+    # botão apareça desabilitado no próximo run enquanto a avaliação (que
     # envolve uma chamada de rede à API da Groq) roda.
     st.session_state.analyzing = True
     st.session_state.analysis_message = None
@@ -202,7 +202,7 @@ if st.session_state.analyzing:
             if not api_key:
                 st.session_state.analysis_message = {
                     "type": "error",
-                    "text": "⚠️ Nenhuma API key da Groq configurada. Configure a variável de ambiente GROQ_API_KEY para executar a análise.",
+                    "text": "⚠️ Nenhuma API key da Groq configurada. Configure a variável de ambiente GROQ_API_KEY para executar a avaliação.",
                 }
             else:
                 prompt_template = load_prompt_template()
@@ -219,7 +219,7 @@ if st.session_state.analyzing:
                         )
                         st.session_state.analysis_message = {
                             "type": "success",
-                            "text": "Análise concluída com sucesso!",
+                            "text": "Avaliação concluída com sucesso!",
                             "result": result,
                             "prompt": user_prompt,
                         }

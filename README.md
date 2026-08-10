@@ -1,5 +1,5 @@
 ---
-title: Análise de Candidatos
+title: Avaliação de Candidatos
 emoji: ⚙️
 colorFrom: blue
 colorTo: indigo
@@ -8,9 +8,9 @@ app_port: 7860
 pinned: false
 ---
 
-# Análise de Candidatos
+# Avaliação de Candidatos
 
-Ferramenta para análise e ranqueamento de candidatos com base nos requisitos de uma vaga de emprego, utilizando IA via Groq API.
+Ferramenta para avaliação e ranqueamento de candidatos com base nos requisitos de uma vaga de emprego, utilizando IA via Groq API.
 
 ## Como usar
 

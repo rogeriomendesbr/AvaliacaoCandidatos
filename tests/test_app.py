@@ -33,7 +33,7 @@ def test_app_runs_without_exception():
 
 def test_app_shows_title():
     at = _app_test().run()
-    assert any("Análise de Candidatos" in s.value for s in at.subheader)
+    assert any("Avaliação de Candidatos" in s.value for s in at.subheader)
 
 
 def test_app_starts_with_no_resumes_loaded():
@@ -196,7 +196,7 @@ def test_clear_button_resets_all_state(monkeypatch):
     monkeypatch.setattr(llm, "analyze_resumes", lambda **kwargs: "RESULTADO DA ANALISE")
     at = _ready_app(monkeypatch)
     at.button(key="go-button").click().run()
-    assert any("sucesso" in s.value for s in at.success)  # sanity: análise rodou
+    assert any("sucesso" in s.value for s in at.success)  # sanity: avaliação rodou
 
     uploader_key_before = at.session_state["uploader_key"]
     requisites_key_before = at.session_state["requisites_key"]
