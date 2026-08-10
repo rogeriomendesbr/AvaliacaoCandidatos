@@ -1,6 +1,6 @@
 # Agent Harness Overview
 
-This repository is a **Python/Streamlit application** (Análise de Candidatos — an HR résumé-screening tool that calls the Hugging Face Inference API). It is developed with the help of **Claude Code** acting as an interactive coding assistant in this working directory.
+This repository is a **Python/Streamlit application** (Análise de Candidatos — an HR résumé-screening tool that calls the Groq API). It is developed with the help of **Claude Code** acting as an interactive coding assistant in this working directory.
 
 There is no autonomous multi-agent pipeline configured in this repo. There are no Dev/QE/Ops subagent roles, no local MCP servers, and no telemetry collection. If you are an AI agent picking up work here, treat this as a normal single-agent coding session: read code, make changes, run the real tests below, report honestly.
 
@@ -11,9 +11,9 @@ Do not assume the presence of harness infrastructure beyond what is listed in th
 ```
 app.py                     Streamlit UI and top-level control flow (single entry point)
 services/
-  config.py                Reads secrets/env vars (HF_TOKEN, HF_MODEL, TESSERACT_CMD, OCR_LANG)
-  extract.py                .pdf / .docx / .md resume parsing, incl. OCR fallback for scanned PDFs
-  llm.py                    Hugging Face InferenceClient call, prompt assembly, error mapping
+  config.py                Reads secrets/env vars (GROQ_API_KEY, GROQ_MODEL, TESSERACT_CMD, OCR_LANG)
+  extract.py                .pdf / .docx / .md / .txt resume parsing, incl. OCR fallback for scanned PDFs
+  llm.py                    Groq client call (openai/gpt-oss-20b default), prompt assembly, error mapping
 prompts/analysis.md         The LLM prompt template used at runtime (not an agent instruction file)
 tests/                      pytest suite — test_app.py, test_llm.py, test_config.py, test_extract.py
 assets/                     Static CSS/logo used by the Streamlit UI

@@ -10,7 +10,7 @@ pinned: false
 
 # Análise de Candidatos
 
-Ferramenta para análise e ranqueamento de candidatos com base nos requisitos de uma vaga de emprego, utilizando IA via Hugging Face Inference API.
+Ferramenta para análise e ranqueamento de candidatos com base nos requisitos de uma vaga de emprego, utilizando IA via Groq API.
 
 ## Como usar
 
@@ -28,13 +28,13 @@ O resultado é um parecer executivo de RH com uma tabela ranqueando os candidato
 
 ```bash
 docker build -t analise-candidatos .
-docker run -p 7860:7860 -e HF_TOKEN=hf_... analise-candidatos
+docker run -p 7860:7860 -e GROQ_API_KEY=gsk_... analise-candidatos
 ```
 
-Para usar um modelo diferente do padrão (`meta-llama/Llama-3.3-70B-Instruct`):
+Para usar um modelo diferente do padrão (`openai/gpt-oss-20b`):
 
 ```bash
-docker run -p 7860:7860 -e HF_TOKEN=hf_... -e HF_MODEL=meta-llama/Llama-3.1-8B-Instruct analise-candidatos
+docker run -p 7860:7860 -e GROQ_API_KEY=gsk_... -e GROQ_MODEL=llama-3.3-70b-versatile analise-candidatos
 ```
 
 Acesse em: http://localhost:7860
@@ -57,7 +57,7 @@ O idioma do OCR pode ser ajustado com a variável de ambiente `OCR_LANG` (padrã
 
 ## Testes
 
-A suíte de testes unitários cobre a configuração de segredos, a integração com a API do Hugging Face (incluindo o mapeamento de erros), a extração de currículos (texto, PDF de texto, PDF de imagem via OCR e `.docx`) e o carregamento da interface.
+A suíte de testes unitários cobre a configuração de segredos, a integração com a API da Groq (incluindo o mapeamento de erros), a extração de currículos (texto, PDF de texto, PDF de imagem via OCR e `.docx`) e o carregamento da interface.
 
 ```bash
 pip install -r requirements-dev.txt
@@ -72,12 +72,12 @@ Em **Settings → Repository secrets**, adicione:
 
 | Variável de ambiente | Valor |
 |---|---|
-| `HF_TOKEN` | Seu token da Hugging Face (com permissão de Inference) |
-| `HF_MODEL` | Opcional. Ex: `meta-llama/Llama-3.3-70B-Instruct` |
+| `GROQ_API_KEY` | Sua API key da Groq |
+| `GROQ_MODEL` | Opcional. Ex: `openai/gpt-oss-20b` |
 
-O token pode ser criado em **huggingface.co → Settings → Access Tokens**.
+A API key pode ser criada em **console.groq.com → API Keys**.
 
-O modelo escolhido precisa ser servido por algum Inference Provider habilitado na sua conta, em **Settings → Inference Providers**. Se nenhum provider habilitado servir o modelo, a API responde `model_not_supported`.
+O modelo escolhido precisa estar disponível na Groq — veja a lista completa em **console.groq.com/docs/models**.
 
 ## Autor
 

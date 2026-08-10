@@ -18,7 +18,7 @@ def _app_test():
 
 def _ready_app(monkeypatch, api_key="fake-token"):
     """App com um currículo carregado e requisitos preenchidos, pronto para clicar em Analisar."""
-    monkeypatch.setenv("HF_TOKEN", api_key)
+    monkeypatch.setenv("GROQ_API_KEY", api_key)
     at = _app_test()
     at.session_state["uploaded_files"] = {"cv.md": "Experiência em Python e Streamlit"}
     at.run()
@@ -120,7 +120,7 @@ def test_remove_uploaded_resume_via_pills():
 
 
 def test_analyze_missing_api_key_shows_error(monkeypatch):
-    monkeypatch.delenv("HF_TOKEN", raising=False)
+    monkeypatch.delenv("GROQ_API_KEY", raising=False)
     monkeypatch.setattr(config.st, "secrets", {})
 
     at = _app_test()
@@ -130,7 +130,7 @@ def test_analyze_missing_api_key_shows_error(monkeypatch):
     at.button(key="go-button").click().run()
 
     assert not at.exception
-    assert any("HF Token" in e.value for e in at.error)
+    assert any("API key da Groq" in e.value for e in at.error)
 
 
 def test_analyze_prompt_too_large_shows_error_without_calling_api(monkeypatch):
@@ -141,7 +141,7 @@ def test_analyze_prompt_too_large_shows_error_without_calling_api(monkeypatch):
         return "não deveria ser chamado"
 
     monkeypatch.setattr(llm, "analyze_resumes", spy)
-    monkeypatch.setenv("HF_TOKEN", "fake-token")
+    monkeypatch.setenv("GROQ_API_KEY", "fake-token")
 
     at = _app_test()
     at.session_state["uploaded_files"] = {"cv.md": "x" * 500_000}

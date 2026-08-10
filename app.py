@@ -3,7 +3,7 @@ import pymupdf
 import pymupdf4llm
 from pathlib import Path
 from services.llm import analyze_resumes, build_prompt, RateLimitError, AuthenticationError, APIError, TokenLimitError
-from services.config import get_hf_api_key, get_hf_model
+from services.config import get_groq_api_key, get_groq_model
 from services.extract import extract_resume, OCRError, UnsupportedFormatError
 
 st.set_page_config(
@@ -184,7 +184,7 @@ if clear_clicked and not busy:
 if clicked and not busy:
     # Mesmo padrão do upload: refaz o rerun antes de processar, para que o
     # botão apareça desabilitado no próximo run enquanto a análise (que
-    # envolve uma chamada de rede à API do Hugging Face) roda.
+    # envolve uma chamada de rede à API da Groq) roda.
     st.session_state.analyzing = True
     st.session_state.analysis_message = None
     st.rerun()
@@ -197,12 +197,12 @@ if st.session_state.analyzing:
                 "text": "Por favor, insira os requisitos da vaga e carregue pelo menos um currículo.",
             }
         else:
-            api_key = get_hf_api_key()
+            api_key = get_groq_api_key()
 
             if not api_key:
                 st.session_state.analysis_message = {
                     "type": "error",
-                    "text": "⚠️ Nenhum HF Token configurado. Configure a variável de ambiente HF_TOKEN para executar a análise.",
+                    "text": "⚠️ Nenhuma API key da Groq configurada. Configure a variável de ambiente GROQ_API_KEY para executar a análise.",
                 }
             else:
                 prompt_template = load_prompt_template()
@@ -214,7 +214,7 @@ if st.session_state.analyzing:
                     try:
                         result = analyze_resumes(
                             api_key=api_key,
-                            model=get_hf_model(),
+                            model=get_groq_model(),
                             prompt=user_prompt,
                         )
                         st.session_state.analysis_message = {
@@ -230,18 +230,18 @@ if st.session_state.analyzing:
                             "type": "error",
                             "text": (
                                 "⚠️ Limite de quota atingido ou muitas requisições por minuto!\n\n"
-                                "Isso acontece quando é atingido o limite de chamadas gratuitas da Inference API do Hugging Face."
+                                "Isso acontece quando é atingido o limite de chamadas gratuitas da API da Groq."
                             ),
                         }
                     except AuthenticationError:
                         st.session_state.analysis_message = {
                             "type": "error",
-                            "text": "❌ Erro de autenticação: o seu HF Token é inválido ou foi revogado.",
+                            "text": "❌ Erro de autenticação: a sua API key da Groq é inválida ou foi revogada.",
                         }
                     except APIError as e:
                         st.session_state.analysis_message = {
                             "type": "error",
-                            "text": f"💥 Ocorreu um erro na API do Hugging Face: {e.message}",
+                            "text": f"💥 Ocorreu um erro na API da Groq: {e.message}",
                         }
                     except Exception as e:
                         st.session_state.analysis_message = {

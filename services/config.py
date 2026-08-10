@@ -13,12 +13,12 @@ def get_secret(env_var: str, toml_section: str, toml_key: str, default: str = ""
     return default
 
 
-def get_hf_api_key() -> str:
-    return get_secret("HF_TOKEN", "huggingface", "token")
+def get_groq_api_key() -> str:
+    return get_secret("GROQ_API_KEY", "groq", "api_key")
 
 
-def get_hf_model() -> str:
-    return get_secret("HF_MODEL", "huggingface", "model", default="meta-llama/Llama-3.3-70B-Instruct")
+def get_groq_model() -> str:
+    return get_secret("GROQ_MODEL", "groq", "model", default="openai/gpt-oss-20b")
 
 
 def get_tesseract_cmd() -> str:

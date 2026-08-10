@@ -1,5 +1,5 @@
-from huggingface_hub import InferenceClient
-from huggingface_hub.errors import HfHubHTTPError
+import groq
+from groq import Groq
 
 
 class RateLimitError(Exception):
@@ -39,9 +39,9 @@ def build_prompt(prompt_template: str, requirements: str, resumes: dict) -> str:
 
 
 def analyze_resumes(api_key: str, model: str, prompt: str) -> str:
-    client = InferenceClient(api_key=api_key)
+    client = Groq(api_key=api_key)
     try:
-        response = client.chat_completion(
+        response = client.chat.completions.create(
             model=model,
             messages=[
                 {"role": "system", "content": "Você é um assistente prestativo."},
@@ -50,15 +50,16 @@ def analyze_resumes(api_key: str, model: str, prompt: str) -> str:
             max_tokens=2048,
         )
         return response.choices[0].message.content
-    except HfHubHTTPError as e:
-        status = e.response.status_code if hasattr(e, "response") and e.response is not None else 0
+    except (groq.AuthenticationError, groq.PermissionDeniedError) as e:
+        raise AuthenticationError() from e
+    except groq.RateLimitError as e:
+        raise RateLimitError() from e
+    except groq.APIStatusError as e:
         msg = str(e).lower()
-        if status == 401 or status == 403:
-            raise AuthenticationError() from e
-        if status == 429:
-            raise RateLimitError() from e
-        if status == 413 or "too large" in msg or ("token" in msg and "limit" in msg):
+        if e.status_code == 413 or "too large" in msg or "context" in msg or ("token" in msg and "limit" in msg):
             raise TokenLimitError() from e
+        raise APIError(str(e)) from e
+    except groq.APIConnectionError as e:
         raise APIError(str(e)) from e
 
 

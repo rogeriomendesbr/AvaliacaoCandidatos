@@ -1,7 +1,8 @@
 from types import SimpleNamespace
 
+import groq
+import httpx
 import pytest
-from huggingface_hub.errors import HfHubHTTPError
 
 import services.llm as llm
 from services.llm import (
@@ -20,13 +21,10 @@ def _chat_response(content):
     )
 
 
-def _hf_error(status_code, message="boom"):
-    response = SimpleNamespace(
-        status_code=status_code,
-        headers={},
-        request=SimpleNamespace(method="POST", url="http://x"),
-    )
-    return HfHubHTTPError(message, response=response)
+def _groq_error(cls, status_code, message="boom"):
+    request = httpx.Request("POST", "https://api.groq.com/openai/v1/chat/completions")
+    response = httpx.Response(status_code=status_code, request=request)
+    return cls(message, response=response, body=None)
 
 
 # --- build_prompt -----------------------------------------------------------
@@ -70,15 +68,20 @@ def test_estimate_tokens():
 def test_analyze_resumes_returns_content(monkeypatch):
     captured = {}
 
-    class FakeClient:
-        def __init__(self, api_key=None):
-            captured["api_key"] = api_key
-
-        def chat_completion(self, **kwargs):
+    class FakeCompletions:
+        def create(self, **kwargs):
             captured["kwargs"] = kwargs
             return _chat_response("RESULTADO DA ANALISE")
 
-    monkeypatch.setattr(llm, "InferenceClient", FakeClient)
+    class FakeChat:
+        completions = FakeCompletions()
+
+    class FakeClient:
+        def __init__(self, api_key=None):
+            captured["api_key"] = api_key
+            self.chat = FakeChat()
+
+    monkeypatch.setattr(llm, "Groq", FakeClient)
     result = analyze_resumes(api_key="key", model="the-model", prompt="the-prompt")
 
     assert result == "RESULTADO DA ANALISE"
@@ -91,51 +94,61 @@ def test_analyze_resumes_returns_content(monkeypatch):
 
 
 def _client_raising(error):
+    class FakeCompletions:
+        def create(self, **kwargs):
+            raise error
+
+    class FakeChat:
+        completions = FakeCompletions()
+
     class FakeClient:
         def __init__(self, api_key=None):
-            pass
-
-        def chat_completion(self, **kwargs):
-            raise error
+            self.chat = FakeChat()
 
     return FakeClient
 
 
 @pytest.mark.parametrize(
-    "status_code,expected",
+    "make_error,expected",
     [
-        (401, AuthenticationError),
-        (403, AuthenticationError),
-        (429, RateLimitError),
-        (413, TokenLimitError),
+        (lambda: _groq_error(groq.AuthenticationError, 401), AuthenticationError),
+        (lambda: _groq_error(groq.PermissionDeniedError, 403), AuthenticationError),
+        (lambda: _groq_error(groq.RateLimitError, 429), RateLimitError),
+        (lambda: _groq_error(groq.APIStatusError, 413, "payload too large"), TokenLimitError),
     ],
 )
-def test_analyze_resumes_maps_status_codes(monkeypatch, status_code, expected):
-    monkeypatch.setattr(llm, "InferenceClient", _client_raising(_hf_error(status_code)))
+def test_analyze_resumes_maps_status_codes(monkeypatch, make_error, expected):
+    monkeypatch.setattr(llm, "Groq", _client_raising(make_error()))
     with pytest.raises(expected):
         analyze_resumes("k", "m", "p")
 
 
 def test_analyze_resumes_token_limit_by_message(monkeypatch):
-    monkeypatch.setattr(
-        llm, "InferenceClient", _client_raising(_hf_error(400, "Request is too large"))
-    )
+    error = _groq_error(groq.BadRequestError, 400, "Request is too large")
+    monkeypatch.setattr(llm, "Groq", _client_raising(error))
     with pytest.raises(TokenLimitError):
         analyze_resumes("k", "m", "p")
 
 
 def test_analyze_resumes_token_limit_by_token_and_limit(monkeypatch):
-    monkeypatch.setattr(
-        llm, "InferenceClient", _client_raising(_hf_error(400, "token limit exceeded"))
-    )
+    error = _groq_error(groq.BadRequestError, 400, "token limit exceeded")
+    monkeypatch.setattr(llm, "Groq", _client_raising(error))
     with pytest.raises(TokenLimitError):
         analyze_resumes("k", "m", "p")
 
 
 def test_analyze_resumes_generic_error_becomes_apierror(monkeypatch):
-    monkeypatch.setattr(
-        llm, "InferenceClient", _client_raising(_hf_error(500, "server exploded"))
-    )
+    error = _groq_error(groq.InternalServerError, 500, "server exploded")
+    monkeypatch.setattr(llm, "Groq", _client_raising(error))
     with pytest.raises(APIError) as excinfo:
         analyze_resumes("k", "m", "p")
     assert "server exploded" in excinfo.value.message
+
+
+def test_analyze_resumes_connection_error_becomes_apierror(monkeypatch):
+    request = httpx.Request("POST", "https://api.groq.com/openai/v1/chat/completions")
+    error = groq.APIConnectionError(message="connection failed", request=request)
+    monkeypatch.setattr(llm, "Groq", _client_raising(error))
+    with pytest.raises(APIError) as excinfo:
+        analyze_resumes("k", "m", "p")
+    assert "connection failed" in excinfo.value.message

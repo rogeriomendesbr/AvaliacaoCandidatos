@@ -49,9 +49,9 @@ def test_get_secret_returns_default_when_env_empty(monkeypatch):
 
 
 def test_get_secret_empty_secrets_value_falls_back_to_default_model(monkeypatch):
-    monkeypatch.delenv("HF_MODEL", raising=False)
-    monkeypatch.setattr(config.st, "secrets", {"huggingface": {"model": ""}})
-    assert config.get_hf_model() == "meta-llama/Llama-3.3-70B-Instruct"
+    monkeypatch.delenv("GROQ_MODEL", raising=False)
+    monkeypatch.setattr(config.st, "secrets", {"groq": {"model": ""}})
+    assert config.get_groq_model() == "openai/gpt-oss-20b"
 
 
 def test_get_secret_empty_default(monkeypatch):
@@ -60,20 +60,20 @@ def test_get_secret_empty_default(monkeypatch):
     assert config.get_secret("MY_VAR", "sec", "key") == ""
 
 
-def test_get_hf_api_key_from_env(monkeypatch):
-    monkeypatch.setenv("HF_TOKEN", "hf_abc")
-    assert config.get_hf_api_key() == "hf_abc"
+def test_get_groq_api_key_from_env(monkeypatch):
+    monkeypatch.setenv("GROQ_API_KEY", "gsk_abc")
+    assert config.get_groq_api_key() == "gsk_abc"
 
 
-def test_get_hf_model_default(monkeypatch):
-    monkeypatch.delenv("HF_MODEL", raising=False)
+def test_get_groq_model_default(monkeypatch):
+    monkeypatch.delenv("GROQ_MODEL", raising=False)
     monkeypatch.setattr(config.st, "secrets", {})
-    assert config.get_hf_model() == "meta-llama/Llama-3.3-70B-Instruct"
+    assert config.get_groq_model() == "openai/gpt-oss-20b"
 
 
-def test_get_hf_model_from_env(monkeypatch):
-    monkeypatch.setenv("HF_MODEL", "meta-llama/Llama-3.1-8B-Instruct")
-    assert config.get_hf_model() == "meta-llama/Llama-3.1-8B-Instruct"
+def test_get_groq_model_from_env(monkeypatch):
+    monkeypatch.setenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+    assert config.get_groq_model() == "llama-3.3-70b-versatile"
 
 
 def test_get_ocr_lang_default(monkeypatch):
