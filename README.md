@@ -6,7 +6,7 @@ Ferramenta para avaliação e ranqueamento de candidatos com base nos requisitos
 
 1. Insira os requisitos da vaga no campo de texto
 2. Carregue os currículos dos candidatos no formato `.md`, `.txt`, `.pdf` ou `.docx`
-3. Clique em **Analisar candidatos**
+3. Clique em **Avaliar candidatos**
 
 Os currículos podem ser `.md`, `.txt`, `.pdf` ou `.docx`. Arquivos `.md` e `.txt` são lidos como texto puro. PDFs baseados em texto são convertidos diretamente para markdown; PDFs baseados em imagem (digitalizações) são lidos automaticamente via OCR e também convertidos para markdown. Arquivos `.docx` são convertidos para markdown preservando a estrutura (títulos, listas, ênfases) a partir dos estilos do Word. Todos são armazenados da mesma forma.
 

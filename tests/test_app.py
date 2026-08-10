@@ -17,7 +17,7 @@ def _app_test():
 
 
 def _ready_app(monkeypatch, api_key="fake-token"):
-    """App com um currículo carregado e requisitos preenchidos, pronto para clicar em Analisar."""
+    """App com um currículo carregado e requisitos preenchidos, pronto para clicar em Avaliar."""
     monkeypatch.setenv("GROQ_API_KEY", api_key)
     at = _app_test()
     at.session_state["uploaded_files"] = {"cv.md": "Experiência em Python e Streamlit"}
@@ -116,7 +116,7 @@ def test_remove_uploaded_resume_via_pills():
     assert at.session_state["uploaded_files"] == {"b.md": "conteúdo b"}
 
 
-# --- botão "Analisar candidatos" -----------------------------------------
+# --- botão "Avaliar candidatos" -----------------------------------------
 
 
 def test_analyze_missing_api_key_shows_error(monkeypatch):

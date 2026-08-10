@@ -168,7 +168,7 @@ st.divider()
 
 col_go, col_clear = st.columns(2)
 with col_go:
-    clicked = st.button("Analisar candidatos", key="go-button", disabled=busy)
+    clicked = st.button("Avaliar candidatos", key="go-button", disabled=busy)
 with col_clear:
     clear_clicked = st.button("Limpar dados", key="clear-button", disabled=busy)
 
