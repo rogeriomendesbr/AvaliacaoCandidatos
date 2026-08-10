@@ -27,14 +27,14 @@ O resultado é um parecer executivo de RH com uma tabela ranqueando os candidato
 ## Executar localmente com Docker
 
 ```bash
-docker build -t analise-candidatos .
-docker run -p 7860:7860 -e GROQ_API_KEY=gsk_... analise-candidatos
+docker build -t avaliacao-candidatos .
+docker run -p 7860:7860 -e GROQ_API_KEY=gsk_... avaliacao-candidatos
 ```
 
 Para usar um modelo diferente do padrão (`openai/gpt-oss-20b`):
 
 ```bash
-docker run -p 7860:7860 -e GROQ_API_KEY=gsk_... -e GROQ_MODEL=llama-3.3-70b-versatile analise-candidatos
+docker run -p 7860:7860 -e GROQ_API_KEY=gsk_... -e GROQ_MODEL=llama-3.3-70b-versatile avaliacao-candidatos
 ```
 
 Acesse em: http://localhost:7860

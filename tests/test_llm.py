@@ -71,7 +71,7 @@ def test_analyze_resumes_returns_content(monkeypatch):
     class FakeCompletions:
         def create(self, **kwargs):
             captured["kwargs"] = kwargs
-            return _chat_response("RESULTADO DA ANALISE")
+            return _chat_response("RESULTADO DA AVALIAÇÃO")
 
     class FakeChat:
         completions = FakeCompletions()
@@ -84,7 +84,7 @@ def test_analyze_resumes_returns_content(monkeypatch):
     monkeypatch.setattr(llm, "Groq", FakeClient)
     result = analyze_resumes(api_key="key", model="the-model", prompt="the-prompt")
 
-    assert result == "RESULTADO DA ANALISE"
+    assert result == "RESULTADO DA AVALIAÇÃO"
     assert captured["api_key"] == "key"
     assert captured["kwargs"]["model"] == "the-model"
     assert captured["kwargs"]["messages"][-1]["content"] == "the-prompt"

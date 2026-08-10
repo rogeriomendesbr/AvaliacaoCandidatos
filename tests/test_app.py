@@ -155,14 +155,14 @@ def test_analyze_prompt_too_large_shows_error_without_calling_api(monkeypatch):
 
 
 def test_analyze_success_shows_result_and_prompt_expander(monkeypatch):
-    monkeypatch.setattr(llm, "analyze_resumes", lambda **kwargs: "RESULTADO DA ANALISE")
+    monkeypatch.setattr(llm, "analyze_resumes", lambda **kwargs: "RESULTADO DA AVALIAÇÃO")
     at = _ready_app(monkeypatch)
 
     at.button(key="go-button").click().run()
 
     assert not at.exception
     assert any("sucesso" in s.value for s in at.success)
-    assert any("RESULTADO DA ANALISE" in m.value for m in at.markdown)
+    assert any("RESULTADO DA AVALIAÇÃO" in m.value for m in at.markdown)
     assert at.expander[0].label == "Prompt enviado ao modelo"
 
 
@@ -193,7 +193,7 @@ def test_analyze_maps_errors_to_messages(monkeypatch, error, expected_snippet):
 
 
 def test_clear_button_resets_all_state(monkeypatch):
-    monkeypatch.setattr(llm, "analyze_resumes", lambda **kwargs: "RESULTADO DA ANALISE")
+    monkeypatch.setattr(llm, "analyze_resumes", lambda **kwargs: "RESULTADO DA AVALIAÇÃO")
     at = _ready_app(monkeypatch)
     at.button(key="go-button").click().run()
     assert any("sucesso" in s.value for s in at.success)  # sanity: avaliação rodou

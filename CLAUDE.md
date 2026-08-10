@@ -6,7 +6,7 @@
 - Single test: `python -m pytest tests/test_llm.py::test_build_prompt_single_resume -q`
 - Lint: not configured — none to run
 - Format: not configured — none to run
-- Docker build: `docker build -t analise-candidatos .`
+- Docker build: `docker build -t avaliacao-candidatos .`
 
 # Code Style Guidelines
 
