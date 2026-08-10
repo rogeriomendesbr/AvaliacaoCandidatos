@@ -7,7 +7,7 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends tesseract-ocr tesseract-ocr-por && \
     rm -rf /var/lib/apt/lists/*
 
-# HF Spaces exige usuário não-root com uid 1000
+# Usuário não-root por segurança
 RUN useradd -m -u 1000 user
 USER user
 ENV PATH="/home/user/.local/bin:$PATH"

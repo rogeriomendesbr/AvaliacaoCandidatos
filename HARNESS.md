@@ -18,7 +18,7 @@ prompts/analysis.md         The LLM prompt template used at runtime (not an agen
 tests/                      pytest suite — test_app.py, test_llm.py, test_config.py, test_extract.py
 assets/                     Static CSS/logo used by the Streamlit UI
 .streamlit/                 Streamlit config + local secrets (secrets.toml is gitignored)
-Dockerfile, .dockerignore   Container build for deployment (e.g. Hugging Face Spaces)
+Dockerfile, .dockerignore   Container build for deployment
 .claude/
   settings.local.json       Bash command permission allowlist for this Claude Code session
   launch.json               Editor/debug launch config

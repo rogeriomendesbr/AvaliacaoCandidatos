@@ -1,13 +1,3 @@
----
-title: Avaliação de Candidatos
-emoji: ⚙️
-colorFrom: blue
-colorTo: indigo
-sdk: docker
-app_port: 7860
-pinned: false
----
-
 # Avaliação de Candidatos
 
 Ferramenta para avaliação e ranqueamento de candidatos com base nos requisitos de uma vaga de emprego, utilizando IA via Groq API.
@@ -66,9 +56,9 @@ pytest
 
 Os testes de OCR usam um `pytesseract` simulado, portanto **não** exigem o Tesseract instalado.
 
-## Configuração de segredos (Hugging Face Spaces)
+## Configuração de segredos
 
-Em **Settings → Repository secrets**, adicione:
+Defina as seguintes variáveis de ambiente (via `docker run -e`, `.streamlit/secrets.toml` ou o mecanismo de configuração do seu ambiente de deploy):
 
 | Variável de ambiente | Valor |
 |---|---|
