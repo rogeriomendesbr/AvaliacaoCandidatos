@@ -57,7 +57,7 @@ def _extract_pdf(file_bytes: bytes) -> str:
     return _ocr_pdf(doc)
 
 
-def _is_text_based(doc) -> bool:
+def _is_text_based(doc: pymupdf.Document) -> bool:
     """Considera o PDF baseado em texto se houver texto extraível suficiente."""
     total = 0
     for page in doc:
@@ -67,7 +67,7 @@ def _is_text_based(doc) -> bool:
     return False
 
 
-def _ocr_pdf(doc) -> str:
+def _ocr_pdf(doc: pymupdf.Document) -> str:
     """Lê um PDF baseado em imagem via OCR e devolve o texto em markdown."""
     try:
         import pytesseract

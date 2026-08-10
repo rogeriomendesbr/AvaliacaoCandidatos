@@ -2,7 +2,7 @@ import streamlit as st
 import pymupdf
 import pymupdf4llm
 from pathlib import Path
-from services.llm import analyze_resumes, build_prompt, RateLimitError, AuthenticationError, APIError, TokenLimitError
+from services.llm import analyze_resumes, build_prompt, RateLimitError, AuthenticationError, APIError, TokenLimitError, PromptInjectionError
 from services.config import get_groq_api_key, get_groq_model
 from services.extract import extract_resume, OCRError, UnsupportedFormatError
 
@@ -26,6 +26,11 @@ def load_prompt_template() -> str:
 TOKEN_LIMIT_MESSAGE = (
     "📄 O conteúdo enviado excede o limite de tokens do modelo.\n\n"
     "Tente reduzir o número de currículos analisados por vez ou encurtar os requisitos da vaga."
+)
+
+PROMPT_INJECTION_MESSAGE = (
+    "🛑 Foi identificado conteúdo suspeito em um dos currículos enviados (possível tentativa de manipular a avaliação da IA).\n\n"
+    "Remova ou revise o arquivo suspeito e tente novamente."
 )
 
 
@@ -210,6 +215,8 @@ if st.session_state.analyzing:
                     user_prompt = build_prompt(prompt_template, text_requisites, st.session_state.uploaded_files)
                 except TokenLimitError:
                     st.session_state.analysis_message = {"type": "error", "text": TOKEN_LIMIT_MESSAGE}
+                except PromptInjectionError:
+                    st.session_state.analysis_message = {"type": "error", "text": PROMPT_INJECTION_MESSAGE}
                 else:
                     try:
                         result = analyze_resumes(
