@@ -19,6 +19,7 @@ tests/                      pytest suite — test_app.py, test_llm.py, test_conf
 assets/                     Static CSS/logo used by the Streamlit UI
 .streamlit/                 Streamlit config + local secrets (secrets.toml is gitignored)
 Dockerfile, .dockerignore   Container build for deployment
+packages.txt                System (apt) deps for Streamlit Community Cloud — Dockerfile is NOT used there
 .claude/
   settings.local.json       Bash command permission allowlist for this Claude Code session
   launch.json               Editor/debug launch config

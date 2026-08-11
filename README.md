@@ -45,6 +45,8 @@ Para a leitura de currículos baseados em imagem (OCR), é necessário ter o **T
 
 O idioma do OCR pode ser ajustado com a variável de ambiente `OCR_LANG` (padrão: `por`).
 
+**Streamlit Community Cloud:** o build não usa o `Dockerfile` — pacotes de sistema (como o Tesseract) precisam estar listados em `packages.txt` na raiz do repositório, lido automaticamente pela plataforma. Sem esse arquivo, `pytesseract` fica sem o executável e a leitura de PDFs de imagem falha com `O executável do Tesseract OCR não foi encontrado`.
+
 ## Testes
 
 A suíte de testes unitários cobre a configuração de segredos, a integração com a API da Groq (incluindo o mapeamento de erros), a extração de currículos (texto, PDF de texto, PDF de imagem via OCR e `.docx`) e o carregamento da interface.

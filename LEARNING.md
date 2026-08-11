@@ -85,3 +85,9 @@ Same root cause as the `col2` height issue fixed just before this (dynamic conte
 ## Default Groq model bumped: `openai/gpt-oss-20b` → `openai/gpt-oss-120b`
 
 Changed `services/config.py::get_groq_model`'s default, plus every doc/example that echoed it (`README.md`, `HARNESS.md`, `.streamlit/secrets.toml.example`, `tests/test_config.py`). No code path hardcodes the model name outside `config.py` — `services/llm.py` always takes `model` as a parameter — so this was a pure default-value change, not a client-code change.
+
+## Streamlit Community Cloud ignores the `Dockerfile` — needs `packages.txt` for system deps
+
+Production deploy on Streamlit Community Cloud threw `O executável do Tesseract OCR não foi encontrado` (from `services/extract.py`'s `pytesseract.TesseractNotFoundError` handler) even though the same code works fine via Docker and locally. Root cause: Community Cloud builds the app from `requirements.txt` only (Python packages) — it does **not** build or run the repo's `Dockerfile`, so the `apt-get install tesseract-ocr tesseract-ocr-por` step in `Dockerfile` never executes on that platform. The `pytesseract` Python package installs fine (it's just a wrapper), but the actual `tesseract` binary it shells out to is missing.
+
+**Fix**: added `packages.txt` at repo root (`tesseract-ocr`, `tesseract-ocr-por`, one per line) — Community Cloud reads this file specifically and apt-installs its contents before starting the app. This is Community-Cloud-specific infra, parallel to but separate from `Dockerfile`; if OCR-related system deps change, update both files, not just one.
