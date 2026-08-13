@@ -8,7 +8,7 @@ from services.extract import extract_resume, OCRError, UnsupportedFormatError
 
 st.set_page_config(
     page_title="Avaliação de Candidatos",
-    page_icon=":gear:",
+    page_icon="assets/logo.png",
     layout="wide",
 )
 
