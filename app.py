@@ -1,14 +1,17 @@
 import streamlit as st
 import pymupdf
 import pymupdf4llm
+from base64 import b64encode
 from pathlib import Path
 from services.llm import analyze_resumes, build_prompt, RateLimitError, AuthenticationError, APIError, TokenLimitError, PromptInjectionError
 from services.config import get_groq_api_key, get_groq_model
 from services.extract import extract_resume, OCRError, UnsupportedFormatError
 
+LOGO_PATH = Path(__file__).resolve().parent / "assets" / "logo.png"
+
 st.set_page_config(
     page_title="Avaliação de Candidatos",
-    page_icon="assets/logo.png",
+    page_icon=str(LOGO_PATH),
     layout="wide",
 )
 
@@ -71,7 +74,8 @@ st.markdown(f"<style>{load_css()}\n{cursor_rule}</style>", unsafe_allow_html=Tru
 
 col_logo, col_title = st.columns([1, 20], vertical_alignment="center")
 with col_logo:
-    st.image("assets/logo.png", width=64)
+    logo_base64 = b64encode(LOGO_PATH.read_bytes()).decode("ascii")
+    st.html(f'<img src="data:image/png;base64,{logo_base64}" width="64" height="64" alt="">')
 with col_title:
     st.subheader("Avaliação de Candidatos")
 
